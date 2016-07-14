@@ -26,6 +26,9 @@ define(['intern/lib/args'], function(args) {
     proxyUrl: 'http://127.0.0.1:9090/',
     siteRoot: siteRoot,
 
+    // fix for BrowserStack exceptions (geolocation and webStorage)
+    fixSessionCapabilities: false,
+
     // Selenium vers on BrowserStack, not yet at 2.53.1
     capabilities: {
       'browserstack.selenium_version': '2.53.0'
