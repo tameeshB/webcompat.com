@@ -92,7 +92,10 @@ issues.LabelEditorView = Backbone.View.extend({
   events: {
     "change input[type=checkbox]": "updateView",
     "click button": "closeEditor",
-    "keyup .wc-LabelEditor-search": "filterLabels"
+    "keyup": "closeEditor",    
+    "keyup .wc-LabelEditor-search": "filterLabels",
+    "keyup .wc-LabelEditor-list-item": "checkUncheckLabels",
+    "keydown .wc-LabelEditor-list-item:visible:last": "backToTop"
   },
   keyboardEvents: {
     esc: "closeEditor"
@@ -156,7 +159,8 @@ issues.LabelEditorView = Backbone.View.extend({
     // the others.
     var checked;
     if (
-      $(evt.target).data("remotename").match(/^status/) && evt.target.checked
+      $(evt.target).data("remotename").match(/^status/) &&
+      evt.target.checked
     ) {
       checked = $('input[type=checkbox][data-remotename^="status"]:checked');
       _.each(checked, function(item) {
@@ -178,14 +182,16 @@ issues.LabelEditorView = Backbone.View.extend({
     });
     this.reRender({ labels: _.uniq(modelUpdate) });
   },
-  closeEditor: function() {
-    var checked = $("input[type=checkbox]:checked");
-    var labelsArray = _.pluck(checked, "name");
-    this.issueView.editorButton.removeClass("is-active");
-    this.issueView.model.updateLabels(labelsArray);
-    // detach() (vs remove()) here because we don't want to lose events if the
-    // user reopens the editor.
-    this.$el.children().detach();
+  closeEditor: function(e) {
+    if (e.keyCode === 27 || e.keyCode === undefined) {
+      var checked = $("input[type=checkbox]:checked");
+      var labelsArray = _.pluck(checked, "name");
+      this.issueView.editorButton.removeClass("is-active");
+      this.issueView.model.updateLabels(labelsArray);
+      // detach() (vs remove()) here because we don't want to lose events if the
+      // user reopens the editor.
+      this.$el.children().detach();
+    }
   },
   filterLabels: _.debounce(function(e) {
     var escape = function(s) {
@@ -205,5 +211,15 @@ issues.LabelEditorView = Backbone.View.extend({
         .closest(".wc-LabelEditor-list-item")
         .hide();
     });
-  }, 100)
+  }, 100),
+  checkUncheckLabels: _.debounce(function(e) {
+    if (e.keyCode === 13) {
+      $(e.target).find("input").click();
+    }
+  }, 100),
+  backToTop: _.debounce(function(e) {
+    if (e.keyCode === 9) {
+      this.$el.find(".wc-LabelEditor-search").focus();
+    }
+  }, 1)
 });

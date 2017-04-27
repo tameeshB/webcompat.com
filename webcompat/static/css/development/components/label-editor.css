@@ -88,6 +88,12 @@
       text-decoration:underline;
     }
 
+    .wc-LabelEditor-button:focus {
+      outline-width: 2px;
+      outline-style: solid;
+      outline-color: Highlight;
+    }
+
   /* list label */
   .wc-LabelEditor-list {
     background-color: #FFF;
@@ -117,6 +123,15 @@
 
       .wc-LabelEditor--list-item:last-child {
           border-bottom:1px solid #ddd;
+      }
+
+      /* event */
+      .wc-LabelEditor--list-item:focus,
+      .wc-LabelEditor--list-item:hover,
+      .wc-LabelEditor--list-item:active {
+          outline-width: 2px;
+          outline-style: solid;
+          outline-color: Highlight;
       }
 
     /* square color */
